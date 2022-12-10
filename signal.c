@@ -1,22 +1,29 @@
 /* hello_signal.c */
-#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+#include <signal.h>
 #include <unistd.h>
+#include <time.h>
+#include <stdbool.h>
 
-void handler(int signum) { // signal handler
+bool go_on = true;
+
+void handler(int signum)
+{ //signal handler
   printf("Hello World!\n");
-  alarm(1);
+  go_on = false;
   // exit(1); //exit after printing
 }
 
-int main(int argc, char *argv[]) {
-  signal(SIGALRM, handler); // register handler to handle SIGALRM
-  alarm(1);                 // Schedule a SIGALRM for 1 second
-  while (1) {               // busy wait for signal to be delivered
-    sleep(1);
+int main(int argc, char * argv[])
+{
+  signal(SIGALRM,handler); //register handler to handle SIGALRM
+  //Schedule a SIGALRM for 1 second
+  while(1) { //busy wait for signal to be delivered
+    alarm(1);
+    while(go_on);
     printf("Turning was right!\n");
+    go_on = true;
   }
-  return 0; // never reached
+  return 0; //never reached
 }
